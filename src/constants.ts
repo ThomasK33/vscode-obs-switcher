@@ -1,8 +1,18 @@
-export const configKey = "obsSwitcher";
-export const commandPrefix = "obsSwitcher";
+export const extensionKey = "obsSwitcher";
 
-export const connectedStatusBarItemText = `$(lock) Disconnect from OBS`;
+// export const connectedStatusBarItemText = `$(lock) Disconnect from OBS`;
+export const connectedStatusBarItemText = `$(lock)`;
 export const disconnectedStatusBarItemText = `$(unlock) Connect to OBS`;
 
+export const connectedStatusBarItemTooltip = "Disconnect from OBS";
+export const disconnectedStatusBarItemTooltip = "Connect to OBS";
+
 export const connectingStatusBarItemText = `$(unlock) Connecting to OBS`;
-export const disconnectingStatusBarItemText = `$(lock) Disconnecting from OBS`;
+
+// --- Commands ---
+
+export const toggleCommandString = `${extensionKey}.toggle`;
+export const connectCommandString = `${extensionKey}.connect`;
+export const disconnectCommandString = `${extensionKey}.disconnect`;
+export const setPasswordCommandString = `${extensionKey}.setPassword`;
+export const deletePasswordCommandString = `${extensionKey}.deletePassword`;

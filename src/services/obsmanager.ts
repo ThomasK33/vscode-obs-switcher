@@ -2,14 +2,27 @@ import * as vscode from "vscode";
 
 import * as OBSWebSocket from "obs-websocket-js";
 import { ConfigManager } from "./configuration";
+import { SecretsManager } from "./secrets";
+import { inject, injectable } from "inversify";
+import { UIManager } from "./ui";
 
+@injectable()
 export class OBSManager {
 	obs: OBSWebSocket;
 	connected = false;
+	connecting = false;
 	showsSecretFile = false;
 	lastActiveScene = "";
 
-	constructor() {
+	constructor(
+		@inject(ConfigManager) public configManager: ConfigManager,
+		@inject(SecretsManager) public secretsManager: SecretsManager,
+		@inject(UIManager) public uiManager: UIManager,
+	) {
+		// Have to set this by hand here to avoid circular dependencies
+		// Sort of a poor mans lazy dependency injection
+		uiManager.obsManager = this;
+
 		this.obs = new OBSWebSocket();
 
 		this.obs.on("SwitchScenes", (data) => {
@@ -18,8 +31,28 @@ export class OBSManager {
 			}
 		});
 
-		this.obs.on("ConnectionOpened", () => (this.connected = true));
-		this.obs.on("ConnectionClosed", () => (this.connected = false));
+		this.obs.on("ConnectionOpened", () => {
+			this.connected = true;
+			this.connecting = false;
+
+			uiManager.updateStatusBarItemText();
+		});
+		this.obs.on("ConnectionClosed", () => {
+			this.connected = false;
+			this.connecting = false;
+
+			uiManager.updateStatusBarItemText();
+		});
+
+		if (this.configManager.configuration.autoConnect) {
+			try {
+				this.connect();
+			} catch (e) {
+				vscode.window.showErrorMessage(
+					`Could not automatically connect to OBS: ${e}`,
+				);
+			}
+		}
 	}
 
 	async handleFileChange(showsSecretFile: boolean) {
@@ -29,7 +62,7 @@ export class OBSManager {
 		}
 
 		// Get obs scene handling configs
-		const { sceneName, autoSwitchBack } = ConfigManager.instance.configuration;
+		const { sceneName, autoSwitchBack } = this.configManager.configuration;
 
 		if (showsSecretFile) {
 			try {
@@ -53,13 +86,15 @@ export class OBSManager {
 	}
 
 	async connect() {
-		const {
+		const { address, secure, sceneName } = this.configManager.configuration;
+		const password = await this.secretsManager.getPassword();
+		this.connecting = true;
+		this.uiManager.updateStatusBarItemText();
+		const connected = await this.obs.connect({
 			address,
-			password,
+			password: password ?? undefined,
 			secure,
-			sceneName,
-		} = ConfigManager.instance.configuration;
-		const connected = await this.obs.connect({ address, password, secure });
+		});
 
 		const sceneList = await this.obs.send("GetSceneList");
 		this.lastActiveScene = sceneList["current-scene"];
@@ -82,6 +117,7 @@ export class OBSManager {
 	}
 
 	async disconnect() {
+		this.connecting = false;
 		const disconnected = await this.obs.disconnect();
 
 		return disconnected;
