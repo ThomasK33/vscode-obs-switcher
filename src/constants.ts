@@ -16,3 +16,5 @@ export const connectCommandString = `${extensionKey}.connect`;
 export const disconnectCommandString = `${extensionKey}.disconnect`;
 export const setPasswordCommandString = `${extensionKey}.setPassword`;
 export const deletePasswordCommandString = `${extensionKey}.deletePassword`;
+export const addFileCommandString = `${extensionKey}.addFile`;
+export const removeFileCommandString = `${extensionKey}.removeFile`;

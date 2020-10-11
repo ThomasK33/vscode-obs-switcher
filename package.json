@@ -43,8 +43,52 @@
 			{
 				"title": "OBS Switcher: Delete stored OBS password",
 				"command": "obsSwitcher.deletePassword"
+			},
+			{
+				"title": "OBS Switcher: Add selected file(s) to secret files list",
+				"command": "obsSwitcher.addFile"
+			},
+			{
+				"title": "OBS Switcher: Remove file(s) from secret files list",
+				"command": "obsSwitcher.removeFile"
 			}
 		],
+		"menus": {
+			"commandPalette": [
+				{
+					"when": "false",
+					"command": "obsSwitcher.toggle"
+				},
+				{
+					"when": "resourceScheme == file",
+					"command": "obsSwitcher.addFile"
+				},
+				{
+					"when": "resourceScheme == file",
+					"command": "obsSwitcher.removeFile"
+				}
+			],
+			"explorer/context": [
+				{
+					"when": "resourceScheme == file",
+					"command": "obsSwitcher.addFile"
+				},
+				{
+					"when": "resourceScheme == file",
+					"command": "obsSwitcher.removeFile"
+				}
+			],
+			"editor/title/context": [
+				{
+					"when": "resourceScheme == file",
+					"command": "obsSwitcher.addFile"
+				},
+				{
+					"when": "resourceScheme == file",
+					"command": "obsSwitcher.removeFile"
+				}
+			]
+		},
 		"configuration": {
 			"title": "OBS Switcher",
 			"properties": {

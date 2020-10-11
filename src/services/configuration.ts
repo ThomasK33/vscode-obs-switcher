@@ -35,4 +35,15 @@ export class ConfigManager {
 	reloadConfig() {
 		this.configuration = this.loadConfig();
 	}
+
+	setConfig(
+		key: string,
+		value: any,
+		configurationTarget?: boolean | vscode.ConfigurationTarget | undefined,
+		overrideInLanguage?: boolean | undefined,
+	) {
+		const config = vscode.workspace.getConfiguration(extensionKey);
+
+		return config.update(key, value, configurationTarget, overrideInLanguage);
+	}
 }
