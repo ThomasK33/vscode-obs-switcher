@@ -11,6 +11,7 @@ import { ConfigManager } from "./services/configuration";
 import { OBSManager } from "./services/obsmanager";
 import { AddFileCommand } from "./commands/addFile";
 import { RemoveFileCommand } from "./commands/removeFile";
+import { ResetSceneCommand } from "./commands/resetScene";
 
 const container = new Container({ autoBindInjectable: true });
 
@@ -27,5 +28,6 @@ container.bind("command").to(SetPasswordCommand);
 container.bind("command").to(ToggleCommand);
 container.bind("command").to(AddFileCommand);
 container.bind("command").to(RemoveFileCommand);
+container.bind("command").to(ResetSceneCommand);
 
 export { container };

@@ -113,13 +113,30 @@ export class OBSManager {
 			);
 		}
 
+		await this.obs.send("SetSceneTransitionOverride", {
+			sceneName,
+			transitionName: "Cut",
+			transitionDuration: 0,
+		});
+
 		return connected;
 	}
 
 	async disconnect() {
+		try {
+			const { sceneName } = this.configManager.configuration;
+			await this.obs.send("RemoveSceneTransitionOverride", { sceneName });
+		} catch (e) {}
+
 		this.connecting = false;
 		const disconnected = await this.obs.disconnect();
 
 		return disconnected;
+	}
+
+	async resetScene() {
+		return this.obs.send("SetCurrentScene", {
+			"scene-name": this.lastActiveScene,
+		});
 	}
 }

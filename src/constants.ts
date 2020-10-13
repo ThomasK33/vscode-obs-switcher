@@ -18,3 +18,4 @@ export const setPasswordCommandString = `${extensionKey}.setPassword`;
 export const deletePasswordCommandString = `${extensionKey}.deletePassword`;
 export const addFileCommandString = `${extensionKey}.addFile`;
 export const removeFileCommandString = `${extensionKey}.removeFile`;
+export const resetSceneCommandString = `${extensionKey}.resetScene`;
