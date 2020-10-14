@@ -1,4 +1,4 @@
-import { getPassword, setPassword, deletePassword, findPassword } from "keytar";
+import { keychain } from "../keychain";
 import { ConfigManager } from "./configuration";
 import { extensionKey } from "../constants";
 import { inject, injectable } from "inversify";
@@ -7,26 +7,29 @@ import { inject, injectable } from "inversify";
 export class SecretsManager {
 	constructor(@inject(ConfigManager) public configManager: ConfigManager) {}
 
-	getPassword() {
-		return getPassword(extensionKey, this.configManager.configuration.address);
+	async getPassword() {
+		return keychain?.getPassword(
+			extensionKey,
+			this.configManager.configuration.address,
+		);
 	}
 
-	setPassword(password: string) {
-		return setPassword(
+	async setPassword(password: string) {
+		return keychain?.setPassword(
 			extensionKey,
 			this.configManager.configuration.address,
 			password,
 		);
 	}
 
-	deletePassword() {
-		return deletePassword(
+	async deletePassword() {
+		return keychain?.deletePassword(
 			extensionKey,
 			this.configManager.configuration.address,
 		);
 	}
 
-	findPassword() {
-		return findPassword(extensionKey);
+	async findPassword() {
+		return keychain?.findPassword(extensionKey);
 	}
 }
