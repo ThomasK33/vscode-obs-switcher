@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import { injectable } from "inversify";
 import * as vscode from "vscode";
 import { extensionKey } from "../constants";
