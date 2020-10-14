@@ -142,7 +142,7 @@
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js",
 		"package": "vsce package",
-		"deploy": "vsce publish --yarn"
+		"deploy": "vsce publish"
 	},
 	"devDependencies": {
 		"@types/glob": "7.1.3",
