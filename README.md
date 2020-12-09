@@ -21,6 +21,7 @@ This extension contributes the following settings:
 - `obsSwitcher.fileNames`: File names to trigger the scene switching (default: `*.env*`)
 - `obsSwitcher.autoSwitchBack`: Switch back after closing a secret file (default: `true`)
 - `obsSwitcher.sceneName`: OBS scene to switch to when a secret file is opened
+- `obsSwitcher.transition`: OBS transition to be used when switching between scenes
 - `obsSwitcher.address`: OBS Websocket address (default: `localhost:4444`)
 - `obsSwitcher.secure`: Secure OBS Websocket connection (default: `false`)
 - `obsSwitcher.autoConnect`: If active, this extension will try to automatically connect to the OBS Websocket endpoint (default: `false`)
@@ -30,6 +31,10 @@ This extension contributes the following settings:
 - None at the time of writing
 
 ## Release Notes
+
+### 0.1.1
+
+Added option to set transition name. (defaults to "Cut")
 
 ### 0.1.0
 

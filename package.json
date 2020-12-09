@@ -16,7 +16,7 @@
 		"url": "https://github.com/ThomasK33/vscode-obs-switcher.git"
 	},
 	"engines": {
-		"vscode": "^1.50.0"
+		"vscode": "^1.51.0"
 	},
 	"categories": [
 		"Other"
@@ -119,7 +119,7 @@
 				"obsSwitcher.transition": {
 					"type": "string",
 					"default": "Cut",
-					"description": "OBS transition name used when switching between scenes"
+					"description": "OBS transition to be used when switching between scenes"
 				},
 				"obsSwitcher.address": {
 					"type": "string",
