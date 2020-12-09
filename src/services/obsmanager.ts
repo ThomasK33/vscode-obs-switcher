@@ -86,7 +86,12 @@ export class OBSManager {
 	}
 
 	async connect() {
-		const { address, secure, sceneName } = this.configManager.configuration;
+		const {
+			address,
+			secure,
+			sceneName,
+			transition,
+		} = this.configManager.configuration;
 		const password = await this.secretsManager.getPassword();
 		this.connecting = true;
 		this.uiManager.updateStatusBarItemText();
@@ -115,7 +120,7 @@ export class OBSManager {
 
 		await this.obs.send("SetSceneTransitionOverride", {
 			sceneName,
-			transitionName: "Cut",
+			transitionName: transition,
 			transitionDuration: 0,
 		});
 

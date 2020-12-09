@@ -11,6 +11,7 @@ export interface OBSSwitcherConfiguration {
 	address: string;
 	secure: boolean;
 	autoConnect: boolean;
+	transition: string;
 }
 
 @injectable()
@@ -31,6 +32,7 @@ export class ConfigManager {
 			sceneName: config.get<string>("sceneName", ""),
 			secure: config.get<boolean>("secure", false),
 			autoConnect: config.get<boolean>("autoConnect", false),
+			transition: config.get<string>("transition", "Cut"),
 		};
 	}
 
