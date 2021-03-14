@@ -2,7 +2,7 @@
 	"name": "obs-switcher",
 	"displayName": "OBS Switcher",
 	"description": "Switch OBS scenes when opening specific files",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"author": {
 		"name": "Thomas Kosiewski",
 		"url": "https://github.com/ThomasK33"
