@@ -19,7 +19,7 @@ export class DeletePasswordCommand implements VSCCommand {
 	) {}
 
 	callback = async () => {
-		const result = this.secretsManager.deletePassword();
+		const result = await this.secretsManager.deletePassword();
 
 		if (result) {
 			vscode.window.showInformationMessage(
