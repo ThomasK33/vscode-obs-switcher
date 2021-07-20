@@ -164,7 +164,7 @@
 		"mocha": "9.0.2",
 		"typescript": "4.3.5",
 		"vsce": "1.96.0",
-		"vscode-test": "1.5.2"
+		"vscode-test": "1.6.1"
 	},
 	"dependencies": {
 		"inversify": "^5.1.1",
