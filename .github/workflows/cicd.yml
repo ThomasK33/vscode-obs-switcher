@@ -23,7 +23,7 @@ jobs:
           node-version: 10.x
       - run: npm install
       - name: Run tests
-        uses: GabrielBB/xvfb-action@v1.5
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm test
       - name: Publish
