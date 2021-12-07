@@ -167,7 +167,7 @@
 		"vscode-test": "1.6.1"
 	},
 	"dependencies": {
-		"inversify": "^5.1.1",
+		"inversify": "^6.0.0",
 		"minimatch": "^3.0.4",
 		"obs-websocket-js": "^4.0.2",
 		"reflect-metadata": "^0.1.13"
