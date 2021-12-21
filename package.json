@@ -154,7 +154,7 @@
 		"@types/keytar": "4.4.0",
 		"@types/minimatch": "3.0.5",
 		"@types/mocha": "9.0.0",
-		"@types/node": "16.11.14",
+		"@types/node": "16.11.15",
 		"@types/vscode": "1.63.1",
 		"@typescript-eslint/eslint-plugin": "5.7.0",
 		"@typescript-eslint/parser": "5.7.0",
