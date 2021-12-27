@@ -156,7 +156,7 @@
 		"@types/mocha": "9.0.0",
 		"@types/node": "16.11.15",
 		"@types/vscode": "1.63.1",
-		"@typescript-eslint/eslint-plugin": "5.8.0",
+		"@typescript-eslint/eslint-plugin": "5.8.1",
 		"@typescript-eslint/parser": "5.8.0",
 		"es6-promisify": "7.0.0",
 		"eslint": "8.5.0",
