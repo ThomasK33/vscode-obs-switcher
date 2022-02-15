@@ -168,7 +168,7 @@
 	},
 	"dependencies": {
 		"inversify": "^6.0.0",
-		"minimatch": "^3.0.4",
+		"minimatch": "^5.0.0",
 		"obs-websocket-js": "^4.0.2",
 		"reflect-metadata": "^0.1.13"
 	}
