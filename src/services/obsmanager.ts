@@ -27,7 +27,7 @@ export class OBSManager {
 
 		this.obs.on('CurrentProgramSceneChanged', (data) => {
 			if (!this.showsSecretFile) {
-				this.lastActiveScene = data.sceneName
+				this.lastActiveScene = data.sceneName;
 			}
 		});
 
@@ -100,7 +100,7 @@ export class OBSManager {
 		});
 
 		const sceneList = await this.obs.call("GetSceneList");
-		this.lastActiveScene = sceneList.currentProgramSceneName
+		this.lastActiveScene = sceneList.currentProgramSceneName;
 
 		const settingsSceneInCollection = sceneList.scenes.reduce<boolean>(
 			(acc, scene) => acc || scene.name === sceneName,
