@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
-
-import * as OBSWebSocket from "obs-websocket-js";
+import OBSWebSocket, { EventSubscription, OBSEventTypes, OBSRequestTypes, OBSResponseTypes } from 'obs-websocket-js';
 import { ConfigManager } from "./configuration";
 import { SecretsManager } from "./secrets";
 import { inject, injectable } from "inversify";
 import { UIManager } from "./ui";
+import { EventEmitter } from "events";
 
 @injectable()
 export class OBSManager {
@@ -25,19 +25,19 @@ export class OBSManager {
 
 		this.obs = new OBSWebSocket();
 
-		this.obs.on("SwitchScenes", (data) => {
+		this.obs.on('CurrentProgramSceneChanged', (data) => {
 			if (!this.showsSecretFile) {
-				this.lastActiveScene = data["scene-name"];
+				this.lastActiveScene = data.sceneName
 			}
 		});
 
-		this.obs.on("ConnectionOpened", () => {
+		this.obs.on('ConnectionOpened', () => {
 			this.connected = true;
 			this.connecting = false;
 
 			uiManager.updateStatusBarItemText();
 		});
-		this.obs.on("ConnectionClosed", () => {
+		this.obs.on('ConnectionClosed', () => {
 			this.connected = false;
 			this.connecting = false;
 
@@ -66,8 +66,8 @@ export class OBSManager {
 
 		if (showsSecretFile) {
 			try {
-				await this.obs.send("SetCurrentScene", {
-					"scene-name": sceneName,
+				await this.obs.call('SetCurrentProgramScene', {
+					sceneName: sceneName
 				});
 			} catch (e) {
 				vscode.window.showErrorMessage(
@@ -76,8 +76,8 @@ export class OBSManager {
 			}
 		} else {
 			if (autoSwitchBack && !showsSecretFile && this.showsSecretFile) {
-				await this.obs.send("SetCurrentScene", {
-					"scene-name": this.lastActiveScene,
+				await this.obs.call("SetCurrentProgramScene", {
+					sceneName: this.lastActiveScene,
 				});
 			}
 		}
@@ -95,14 +95,12 @@ export class OBSManager {
 		const password = await this.secretsManager.getPassword();
 		this.connecting = true;
 		this.uiManager.updateStatusBarItemText();
-		const connected = await this.obs.connect({
-			address,
-			password: password ?? undefined,
-			secure,
+		const connected = await this.obs.connect(`${secure ? 'wss' : 'ws'}://${address}`, password ?? undefined, {
+			eventSubscriptions: EventSubscription.Scenes
 		});
 
-		const sceneList = await this.obs.send("GetSceneList");
-		this.lastActiveScene = sceneList["current-scene"];
+		const sceneList = await this.obs.call("GetSceneList");
+		this.lastActiveScene = sceneList.currentProgramSceneName
 
 		const settingsSceneInCollection = sceneList.scenes.reduce<boolean>(
 			(acc, scene) => acc || scene.name === sceneName,
@@ -118,7 +116,7 @@ export class OBSManager {
 			);
 		}
 
-		await this.obs.send("SetSceneTransitionOverride", {
+		await this.obs.call("SetSceneSceneTransitionOverride", {
 			sceneName,
 			transitionName: transition,
 			transitionDuration: 0,
@@ -130,8 +128,10 @@ export class OBSManager {
 	async disconnect() {
 		try {
 			const { sceneName } = this.configManager.configuration;
-			await this.obs.send("RemoveSceneTransitionOverride", { sceneName });
-		} catch (e) {}
+			await this.obs.call('SetSceneSceneTransitionOverride', {
+				sceneName
+			});
+		} catch (e) { }
 
 		this.connecting = false;
 		const disconnected = await this.obs.disconnect();
@@ -140,8 +140,8 @@ export class OBSManager {
 	}
 
 	async resetScene() {
-		return this.obs.send("SetCurrentScene", {
-			"scene-name": this.lastActiveScene,
+		return this.obs.call('SetCurrentProgramScene', {
+			sceneName: this.lastActiveScene,
 		});
 	}
 }
