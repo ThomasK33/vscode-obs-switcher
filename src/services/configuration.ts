@@ -26,12 +26,12 @@ export class ConfigManager {
 		const config = vscode.workspace.getConfiguration(extensionKey);
 
 		return {
-			address: config.get<string>("address", "localhost:4444"),
+			address: config.get<string>("address", "localhost:4455"),
 			autoSwitchBack: config.get<boolean>("autoSwitchBack", true),
 			fileNames: config.get<string[]>("fileNames", ["*.env*"]),
 			sceneName: config.get<string>("sceneName", ""),
 			secure: config.get<boolean>("secure", false),
-			autoConnect: config.get<boolean>("autoConnect", false),
+			autoConnect: config.get<boolean>("autoConnect", true),
 			transition: config.get<string>("transition", "Cut"),
 		};
 	}
