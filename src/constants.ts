@@ -1,13 +1,14 @@
 export const extensionKey = "obsSwitcher";
 
 // export const connectedStatusBarItemText = `$(lock) Disconnect from OBS`;
-export const connectedStatusBarItemText = `$(lock)`;
-export const disconnectedStatusBarItemText = `$(unlock) Connect to OBS`;
+export const hiddenStatusBarItemText = `$(eye-closed) OBS`;
+export const connectedStatusBarItemText = `$(eye) OBS`;
+export const disconnectedStatusBarItemText = `$(debug-start) OBS`;
 
 export const connectedStatusBarItemTooltip = "Disconnect from OBS";
 export const disconnectedStatusBarItemTooltip = "Connect to OBS";
 
-export const connectingStatusBarItemText = `$(unlock) Connecting to OBS`;
+export const connectingStatusBarItemText = `$(loading~spin) OBS`;
 
 // --- Commands ---
 

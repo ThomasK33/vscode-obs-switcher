@@ -1,11 +1,12 @@
 import * as vscode from "vscode";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import {
 	connectedStatusBarItemText,
 	connectedStatusBarItemTooltip,
 	connectingStatusBarItemText,
 	disconnectedStatusBarItemText,
 	disconnectedStatusBarItemTooltip,
+	hiddenStatusBarItemText,
 	toggleCommandString,
 } from "../constants";
 import { OBSManager } from "./obsmanager";
@@ -27,11 +28,17 @@ export class UIManager {
 	}
 
 	updateStatusBarItemText() {
-		this.statusBarItem.text = this.obsManager?.connected
-			? connectedStatusBarItemText
-			: this.obsManager?.connecting
-			? connectingStatusBarItemText
-			: disconnectedStatusBarItemText;
+		if(this.obsManager?.connected){
+			if(this.obsManager.showsSecretFile){
+				this.statusBarItem.text = hiddenStatusBarItemText
+			} else {
+				this.statusBarItem.text = connectedStatusBarItemText
+			}
+		} else if (this.obsManager?.connecting){
+			this.statusBarItem.text = connectingStatusBarItemText
+		} else {
+			this.statusBarItem.text = disconnectedStatusBarItemText
+		}
 
 		this.statusBarItem.tooltip = this.obsManager?.connected
 			? connectedStatusBarItemTooltip
