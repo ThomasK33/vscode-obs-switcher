@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
-import * as minimatch from "minimatch";
+import minimatch from "minimatch";
 import { extensionKey } from "./constants";
 import { ConfigManager } from "./services/configuration";
 import { OBSManager } from "./services/obsmanager";
