@@ -83,15 +83,20 @@ export class OBSManager {
 		}
 
 		this.showsSecretFile = showsSecretFile;
+		this.uiManager.updateStatusBarItemText();
 	}
 
 	async connect() {
+		// ensure this variables are not modified on runtime
 		const {
 			address,
 			secure,
 			sceneName,
-			transition,
 		} = this.configManager.configuration;
+
+		// transition fallback support
+		let transition = this.configManager.configuration.transition
+
 		const password = await this.secretsManager.getPassword();
 		this.connecting = true;
 		this.uiManager.updateStatusBarItemText();
@@ -103,7 +108,7 @@ export class OBSManager {
 		this.lastActiveScene = sceneList.currentProgramSceneName;
 
 		const settingsSceneInCollection = sceneList.scenes.reduce<boolean>(
-			(acc, scene) => acc || scene.name === sceneName,
+			(acc, scene) => acc || scene.sceneName === sceneName,
 			false,
 		);
 
@@ -111,9 +116,28 @@ export class OBSManager {
 			await this.disconnect();
 			throw new Error(
 				`Could not find scene "${sceneName}" in current scene list. Currently available scenes are: ${sceneList.scenes
-					.map((scene) => scene.name)
+					.map((scene) => scene.sceneName)
 					.join(", ")}`,
 			);
+		}
+
+		const transitions = await this.obs.call("GetSceneTransitionList")
+		// transition names can change depending on the locale of OBS. In order to fallback to a potentially good cut transition in
+		// OBS setups were the locale isn't English, we find a fallback cut transition of the same kind. we then update the transition to be the 
+		// newly found fallback transition and save the config.
+		// this is only done with the Cut transition, as it is the default (and probably desired) cut transition, and we want users
+		// using the extension to have a smooth first use experience. other transition setups to explicitly fail in order for the user 
+		// to review the settings. 
+		if (transition == 'Cut' || !transitions.transitions.find(t => t.transitionName == transition)) {
+			const cutFallback = transitions.transitions.find(t => t.transitionKind == 'cut_transition') // default to 'cut_transition' type
+			if (!cutFallback) {
+				throw new Error(`the transition '${transition}' was not found, and no transitions similar to 'cut' were found`)
+			}
+			vscode.window.showInformationMessage(
+				`The transition '${transition}' was not found, falling back to '${cutFallback.transitionName} and saving new config`,
+			);
+			transition = cutFallback.transitionName as string
+			this.configManager.setConfig('transition', transition, vscode.ConfigurationTarget.Global)
 		}
 
 		await this.obs.call("SetSceneSceneTransitionOverride", {
