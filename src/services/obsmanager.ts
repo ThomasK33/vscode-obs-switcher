@@ -119,7 +119,6 @@ export class OBSManager {
 		await this.obs.call("SetSceneSceneTransitionOverride", {
 			sceneName,
 			transitionName: transition,
-			transitionDuration: 0,
 		});
 
 		return connected;
