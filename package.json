@@ -7,6 +7,12 @@
 		"name": "Thomas Kosiewski",
 		"url": "https://github.com/ThomasK33"
 	},
+	"contributors": [
+		{
+			"name": "quiquelhappy",
+			"url": "http://github.com/quiquelhappy"
+		}
+	],
 	"publisher": "thomask33",
 	"icon": "icon.png",
 	"preview": true,
