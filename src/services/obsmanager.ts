@@ -1,10 +1,9 @@
 import * as vscode from "vscode";
-import OBSWebSocket, { EventSubscription, OBSEventTypes, OBSRequestTypes, OBSResponseTypes } from 'obs-websocket-js';
+import OBSWebSocket, { EventSubscription } from "obs-websocket-js";
 import { ConfigManager } from "./configuration";
 import { SecretsManager } from "./secrets";
 import { inject, injectable } from "inversify";
 import { UIManager } from "./ui";
-import { EventEmitter } from "events";
 
 @injectable()
 export class OBSManager {
@@ -17,7 +16,7 @@ export class OBSManager {
 	constructor(
 		@inject(ConfigManager) public configManager: ConfigManager,
 		@inject(SecretsManager) public secretsManager: SecretsManager,
-		@inject(UIManager) public uiManager: UIManager,
+		@inject(UIManager) public uiManager: UIManager
 	) {
 		// Have to set this by hand here to avoid circular dependencies
 		// Sort of a poor mans lazy dependency injection
@@ -25,19 +24,19 @@ export class OBSManager {
 
 		this.obs = new OBSWebSocket();
 
-		this.obs.on('CurrentProgramSceneChanged', (data) => {
+		this.obs.on("CurrentProgramSceneChanged", (data) => {
 			if (!this.showsSecretFile) {
 				this.lastActiveScene = data.sceneName;
 			}
 		});
 
-		this.obs.on('ConnectionOpened', () => {
+		this.obs.on("ConnectionOpened", () => {
 			this.connected = true;
 			this.connecting = false;
 
 			uiManager.updateStatusBarItemText();
 		});
-		this.obs.on('ConnectionClosed', () => {
+		this.obs.on("ConnectionClosed", () => {
 			this.connected = false;
 			this.connecting = false;
 
@@ -49,7 +48,7 @@ export class OBSManager {
 				this.connect();
 			} catch (e) {
 				vscode.window.showErrorMessage(
-					`Could not automatically connect to OBS: ${e}`,
+					`Could not automatically connect to OBS: ${e}`
 				);
 			}
 		}
@@ -66,12 +65,16 @@ export class OBSManager {
 
 		if (showsSecretFile) {
 			try {
-				await this.obs.call('SetCurrentProgramScene', {
-					sceneName: sceneName
+				await this.obs.call("SetCurrentProgramScene", {
+					sceneName: sceneName,
 				});
 			} catch (e) {
 				vscode.window.showErrorMessage(
-					`Could not SetCurrentScene: Error: ${JSON.stringify(e, null, 2)}`,
+					`Could not SetCurrentScene: Error: ${JSON.stringify(
+						e,
+						null,
+						2
+					)}`
 				);
 			}
 		} else {
@@ -88,28 +91,28 @@ export class OBSManager {
 
 	async connect() {
 		// ensure this variables are not modified on runtime
-		const {
-			address,
-			secure,
-			sceneName,
-		} = this.configManager.configuration;
+		const { address, secure, sceneName } = this.configManager.configuration;
 
 		// transition fallback support
-		let transition = this.configManager.configuration.transition
+		let transition = this.configManager.configuration.transition;
 
 		const password = await this.secretsManager.getPassword();
 		this.connecting = true;
 		this.uiManager.updateStatusBarItemText();
-		const connected = await this.obs.connect(`${secure ? 'wss' : 'ws'}://${address}`, password ?? undefined, {
-			eventSubscriptions: EventSubscription.Scenes
-		});
+		const connected = await this.obs.connect(
+			`${secure ? "wss" : "ws"}://${address}`,
+			password ?? undefined,
+			{
+				eventSubscriptions: EventSubscription.Scenes,
+			}
+		);
 
 		const sceneList = await this.obs.call("GetSceneList");
 		this.lastActiveScene = sceneList.currentProgramSceneName;
 
 		const settingsSceneInCollection = sceneList.scenes.reduce<boolean>(
 			(acc, scene) => acc || scene.sceneName === sceneName,
-			false,
+			false
 		);
 
 		if (!settingsSceneInCollection) {
@@ -117,27 +120,38 @@ export class OBSManager {
 			throw new Error(
 				`Could not find scene "${sceneName}" in current scene list. Currently available scenes are: ${sceneList.scenes
 					.map((scene) => scene.sceneName)
-					.join(", ")}`,
+					.join(", ")}`
 			);
 		}
 
-		const transitions = await this.obs.call("GetSceneTransitionList")
+		const transitions = await this.obs.call("GetSceneTransitionList");
 		// transition names can change depending on the locale of OBS. In order to fallback to a potentially good cut transition in
-		// OBS setups were the locale isn't English, we find a fallback cut transition of the same kind. we then update the transition to be the 
+		// OBS setups were the locale isn't English, we find a fallback cut transition of the same kind. we then update the transition to be the
 		// newly found fallback transition and save the config.
 		// this is only done with the Cut transition, as it is the default (and probably desired) cut transition, and we want users
-		// using the extension to have a smooth first use experience. other transition setups to explicitly fail in order for the user 
-		// to review the settings. 
-		if (transition == 'Cut' || !transitions.transitions.find(t => t.transitionName == transition)) {
-			const cutFallback = transitions.transitions.find(t => t.transitionKind == 'cut_transition') // default to 'cut_transition' type
+		// using the extension to have a smooth first use experience. other transition setups to explicitly fail in order for the user
+		// to review the settings.
+		if (
+			transition == "Cut" ||
+			!transitions.transitions.find((t) => t.transitionName == transition)
+		) {
+			const cutFallback = transitions.transitions.find(
+				(t) => t.transitionKind == "cut_transition"
+			); // default to 'cut_transition' type
 			if (!cutFallback) {
-				throw new Error(`the transition '${transition}' was not found, and no transitions similar to 'cut' were found`)
+				throw new Error(
+					`the transition '${transition}' was not found, and no transitions similar to 'cut' were found`
+				);
 			}
 			vscode.window.showInformationMessage(
-				`The transition '${transition}' was not found, falling back to '${cutFallback.transitionName} and saving new config`,
+				`The transition '${transition}' was not found, falling back to '${cutFallback.transitionName} and saving new config`
 			);
-			transition = cutFallback.transitionName as string
-			this.configManager.setConfig('transition', transition, vscode.ConfigurationTarget.Global)
+			transition = cutFallback.transitionName as string;
+			this.configManager.setConfig(
+				"transition",
+				transition,
+				vscode.ConfigurationTarget.Global
+			);
 		}
 
 		await this.obs.call("SetSceneSceneTransitionOverride", {
@@ -151,10 +165,10 @@ export class OBSManager {
 	async disconnect() {
 		try {
 			const { sceneName } = this.configManager.configuration;
-			await this.obs.call('SetSceneSceneTransitionOverride', {
-				sceneName
+			await this.obs.call("SetSceneSceneTransitionOverride", {
+				sceneName,
 			});
-		} catch (e) { }
+		} catch (e) {}
 
 		this.connecting = false;
 		const disconnected = await this.obs.disconnect();
@@ -163,7 +177,7 @@ export class OBSManager {
 	}
 
 	async resetScene() {
-		return this.obs.call('SetCurrentProgramScene', {
+		return this.obs.call("SetCurrentProgramScene", {
 			sceneName: this.lastActiveScene,
 		});
 	}

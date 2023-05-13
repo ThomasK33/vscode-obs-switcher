@@ -24,7 +24,7 @@ This extension contributes the following settings:
 - `obsSwitcher.transition`: OBS transition to be used when switching between scenes
 - `obsSwitcher.address`: OBS Websocket address (default: `localhost:4455`)
 - `obsSwitcher.secure`: Secure OBS Websocket connection (default: `false`)
-- `obsSwitcher.autoConnect`: If active, this extension will try to automatically connect to the OBS Websocket endpoint (default: `true`)
+- `obsSwitcher.autoConnect`: If active, this extension will try to automatically connect to the OBS Websocket endpoint (default: `false`)
 
 ## Known Issues
 

@@ -17,7 +17,7 @@ export class AddFileCommand implements VSCCommand {
 		}
 
 		const selectedFilesNames = selectedFiles.map((selectedFile) =>
-			selectedFile.path.replace(/^.*[\\\/]/, ""),
+			selectedFile.path.replace(/^.*[\\\/]/, "")
 		);
 
 		const { fileNames } = this.configManager.configuration;
@@ -31,7 +31,7 @@ export class AddFileCommand implements VSCCommand {
 		await this.configManager.setConfig("fileNames", fileNames);
 
 		vscode.window.showInformationMessage(
-			`Added ${selectedFilesNames.join(", ")} to list of secret files`,
+			`Added ${selectedFilesNames.join(", ")} to list of secret files`
 		);
 	};
 }

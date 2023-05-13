@@ -12,13 +12,13 @@ export class SetPasswordCommand implements VSCCommand {
 	command = setPasswordCommandString;
 
 	constructor(
-		@inject(SecretsManager) public secretsManager: SecretsManager,
-	) { }
+		@inject(SecretsManager) public secretsManager: SecretsManager
+	) {}
 
-	callback = () => setPasswordDialog(this.secretsManager)
+	callback = () => setPasswordDialog(this.secretsManager);
 }
 
-export async function setPasswordDialog(secrets:SecretsManager) {
+export async function setPasswordDialog(secrets: SecretsManager) {
 	const password = await vscode.window.showInputBox({
 		placeHolder: "Type the OBS Websocket password",
 		password: true,
@@ -33,13 +33,15 @@ export async function setPasswordDialog(secrets:SecretsManager) {
 			.setPassword(password)
 			.then(() =>
 				vscode.window.showInformationMessage(
-					`Stored OBS Websocket password. You can now connect to OBS.`,
-				),
+					`Stored OBS Websocket password. You can now connect to OBS.`
+				)
 			)
 			.catch((e) =>
 				vscode.window.showErrorMessage(
-					`An error occurred while setting password: ${prettyError(e)}`,
-				),
+					`An error occurred while setting password: ${prettyError(
+						e
+					)}`
+				)
 			);
 	} else {
 		vscode.window.showErrorMessage("You cannot use an empty password.");

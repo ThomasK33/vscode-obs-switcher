@@ -21,7 +21,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		.getAll<VSCCommand>("command")
 		.forEach(({ command, callback, thisArg }) => {
 			subscriptions.push(
-				vscode.commands.registerCommand(command, callback, thisArg),
+				vscode.commands.registerCommand(command, callback, thisArg)
 			);
 		});
 
@@ -35,27 +35,26 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 			if (fileName) {
 				// Determine wether currently open file is a secret file or not
-				const showsSecretFile = configManager.configuration.fileNames.reduce<
-					boolean
-				>(
-					(acc, secretFileName) =>
-						acc ||
-						minimatch(fileName, secretFileName, {
-							dot: true,
-							nocase: true,
-							matchBase: true,
-						}),
-					false,
-				);
+				const showsSecretFile =
+					configManager.configuration.fileNames.reduce<boolean>(
+						(acc, secretFileName) =>
+							acc ||
+							minimatch(fileName, secretFileName, {
+								dot: true,
+								nocase: true,
+								matchBase: true,
+							}),
+						false
+					);
 
 				try {
 					// Handle shown file
-					obsManager.handleFileChange(showsSecretFile);
+					await obsManager.handleFileChange(showsSecretFile);
 				} catch (e) {
 					vscode.window.showErrorMessage(`${prettyError(e)}`);
 				}
 			}
-		}),
+		})
 	);
 
 	// --- Configuration reload on settings.json change ---
@@ -64,7 +63,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 			if (e.affectsConfiguration(extensionKey)) {
 				configManager.reloadConfig();
 			}
-		}),
+		})
 	);
 }
 

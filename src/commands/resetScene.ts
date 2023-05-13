@@ -17,7 +17,7 @@ export class ResetSceneCommand implements VSCCommand {
 			await this.obsManager.resetScene();
 		} catch (e) {
 			vscode.window.showErrorMessage(
-				`Could not execute toggle command: ${prettyError(e)}`,
+				`Could not execute toggle command: ${prettyError(e)}`
 			);
 		}
 	};

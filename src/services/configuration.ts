@@ -31,7 +31,7 @@ export class ConfigManager {
 			fileNames: config.get<string[]>("fileNames", ["*.env*"]),
 			sceneName: config.get<string>("sceneName", ""),
 			secure: config.get<boolean>("secure", false),
-			autoConnect: config.get<boolean>("autoConnect", true),
+			autoConnect: config.get<boolean>("autoConnect", false),
 			transition: config.get<string>("transition", "Cut"),
 		};
 	}
@@ -44,10 +44,15 @@ export class ConfigManager {
 		key: string,
 		value: any,
 		configurationTarget?: boolean | vscode.ConfigurationTarget | undefined,
-		overrideInLanguage?: boolean | undefined,
+		overrideInLanguage?: boolean | undefined
 	) {
 		const config = vscode.workspace.getConfiguration(extensionKey);
 
-		return config.update(key, value, configurationTarget, overrideInLanguage);
+		return config.update(
+			key,
+			value,
+			configurationTarget,
+			overrideInLanguage
+		);
 	}
 }

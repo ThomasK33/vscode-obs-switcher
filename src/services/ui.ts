@@ -20,7 +20,7 @@ export class UIManager {
 	constructor() {
 		this.statusBarItem = vscode.window.createStatusBarItem(
 			vscode.StatusBarAlignment.Right,
-			100,
+			100
 		);
 		this.statusBarItem.command = toggleCommandString;
 		this.updateStatusBarItemText();
@@ -28,16 +28,16 @@ export class UIManager {
 	}
 
 	updateStatusBarItemText() {
-		if(this.obsManager?.connected){
-			if(this.obsManager.showsSecretFile){
-				this.statusBarItem.text = hiddenStatusBarItemText
+		if (this.obsManager?.connected) {
+			if (this.obsManager.showsSecretFile) {
+				this.statusBarItem.text = hiddenStatusBarItemText;
 			} else {
-				this.statusBarItem.text = connectedStatusBarItemText
+				this.statusBarItem.text = connectedStatusBarItemText;
 			}
-		} else if (this.obsManager?.connecting){
-			this.statusBarItem.text = connectingStatusBarItemText
+		} else if (this.obsManager?.connecting) {
+			this.statusBarItem.text = connectingStatusBarItemText;
 		} else {
-			this.statusBarItem.text = disconnectedStatusBarItemText
+			this.statusBarItem.text = disconnectedStatusBarItemText;
 		}
 
 		this.statusBarItem.tooltip = this.obsManager?.connected

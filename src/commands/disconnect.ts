@@ -18,7 +18,7 @@ export class DisconnectCommand implements VSCCommand {
 			await this.obsManager.disconnect();
 		} catch (e) {
 			vscode.window.showErrorMessage(
-				`Could not disconnect from OBS: ${prettyError(e)}`,
+				`Could not disconnect from OBS: ${prettyError(e)}`
 			);
 		}
 	};

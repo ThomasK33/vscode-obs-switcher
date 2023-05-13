@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { inject, injectable } from "inversify";
-import { connectCommandString, setPasswordCommandString } from "../constants";
+import { connectCommandString } from "../constants";
 import { OBSManager } from "../services/obsmanager";
 import { VSCCommand } from "./command";
 import { prettyError } from "../helper";
@@ -15,8 +15,8 @@ export class ConnectCommand implements VSCCommand {
 
 	constructor(
 		@inject(OBSManager) public obsManager: OBSManager,
-		@inject(SecretsManager) public secretsManager: SecretsManager,
-	) { }
+		@inject(SecretsManager) public secretsManager: SecretsManager
+	) {}
 
 	callback = async () => {
 		try {
@@ -33,9 +33,12 @@ export class ConnectCommand implements VSCCommand {
 			} catch (error: any) {
 				let msg = prettyError(error) as string;
 				if (error.code == -1) {
-					msg = "Enable websockets by going into OBS 'tools' → 'obs-websocket settings'. If you don't see this option, make sure you are running OBS v28 or newer, or install the obs-websocket extension";
+					msg =
+						"Enable the websocket feature by going into OBS 'tools' → 'obs-websocket settings'. If you don't see this option, make sure you are running OBS v28 or newer, or install the obs-websocket extension";
 				}
-				vscode.window.showErrorMessage('Could not connect to OBS: ' + msg);
+				vscode.window.showErrorMessage(
+					`Could not connect to OBS: ${msg}`
+				);
 			}
 		}
 	};
