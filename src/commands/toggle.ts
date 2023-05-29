@@ -18,7 +18,7 @@ export class ToggleCommand implements VSCCommand {
 
 	constructor(
 		@inject(OBSManager) public obsManager: OBSManager,
-		@inject(UIManager) public uiManager: UIManager,
+		@inject(UIManager) public uiManager: UIManager
 	) {}
 
 	callback = () => {
@@ -30,7 +30,7 @@ export class ToggleCommand implements VSCCommand {
 			}
 		} catch (e) {
 			vscode.window.showErrorMessage(
-				`Could not execute toggle command: ${prettyError(e)}`,
+				`Could not execute toggle command: ${prettyError(e)}`
 			);
 		}
 	};

@@ -10,7 +10,7 @@ export class SecretsManager {
 	async getPassword() {
 		return keychain?.getPassword(
 			extensionKey,
-			this.configManager.configuration.address,
+			this.configManager.configuration.address
 		);
 	}
 
@@ -18,14 +18,14 @@ export class SecretsManager {
 		return keychain?.setPassword(
 			extensionKey,
 			this.configManager.configuration.address,
-			password,
+			password
 		);
 	}
 
 	async deletePassword() {
 		return keychain?.deletePassword(
 			extensionKey,
-			this.configManager.configuration.address,
+			this.configManager.configuration.address
 		);
 	}
 

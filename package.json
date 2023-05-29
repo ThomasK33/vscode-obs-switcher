@@ -2,11 +2,17 @@
 	"name": "obs-switcher",
 	"displayName": "OBS Switcher",
 	"description": "Switch OBS scenes when opening specific files",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"author": {
 		"name": "Thomas Kosiewski",
 		"url": "https://github.com/ThomasK33"
 	},
+	"contributors": [
+		{
+			"name": "quiquelhappy",
+			"url": "http://github.com/quiquelhappy"
+		}
+	],
 	"publisher": "thomask33",
 	"icon": "icon.png",
 	"preview": true,
@@ -16,15 +22,15 @@
 		"url": "https://github.com/ThomasK33/vscode-obs-switcher.git"
 	},
 	"engines": {
-		"vscode": "^1.54.0"
+		"vscode": "^1.70.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"onStartupFinished"
 	],
-	"main": "./out/extension.js",
+	"main": "./out/main.js",
 	"contributes": {
 		"commands": [
 			{
@@ -140,16 +146,19 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
+		"vscode:prepublish": "npm run esbuild-base -- --minify",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+		"compile": "npm run esbuild-base -- --sourcemap",
+		"test-compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
-		"watch": "tsc -watch -p ./",
+		"watch": "npm run esbuild-base -- --sourcemap --watch",
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js",
 		"package": "vsce package",
 		"deploy": "vsce publish"
 	},
 	"devDependencies": {
+		"@types/debug": "^4.1.7",
 		"@types/glob": "7.2.0",
 		"@types/keytar": "4.4.0",
 		"@types/minimatch": "3.0.5",
@@ -159,6 +168,7 @@
 		"@typescript-eslint/eslint-plugin": "5.30.7",
 		"@typescript-eslint/parser": "5.30.7",
 		"es6-promisify": "7.0.0",
+		"esbuild": "^0.17.15",
 		"eslint": "8.21.0",
 		"glob": "8.0.3",
 		"mocha": "10.0.0",

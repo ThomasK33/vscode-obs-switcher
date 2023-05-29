@@ -26,7 +26,7 @@ export class ConfigManager {
 		const config = vscode.workspace.getConfiguration(extensionKey);
 
 		return {
-			address: config.get<string>("address", "localhost:4444"),
+			address: config.get<string>("address", "localhost:4455"),
 			autoSwitchBack: config.get<boolean>("autoSwitchBack", true),
 			fileNames: config.get<string[]>("fileNames", ["*.env*"]),
 			sceneName: config.get<string>("sceneName", ""),
@@ -44,10 +44,15 @@ export class ConfigManager {
 		key: string,
 		value: any,
 		configurationTarget?: boolean | vscode.ConfigurationTarget | undefined,
-		overrideInLanguage?: boolean | undefined,
+		overrideInLanguage?: boolean | undefined
 	) {
 		const config = vscode.workspace.getConfiguration(extensionKey);
 
-		return config.update(key, value, configurationTarget, overrideInLanguage);
+		return config.update(
+			key,
+			value,
+			configurationTarget,
+			overrideInLanguage
+		);
 	}
 }

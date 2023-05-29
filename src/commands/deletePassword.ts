@@ -15,7 +15,7 @@ export class DeletePasswordCommand implements VSCCommand {
 	constructor(
 		@inject(OBSManager) public obsManager: OBSManager,
 		@inject(SecretsManager) public secretsManager: SecretsManager,
-		@inject(ConfigManager) public configManager: ConfigManager,
+		@inject(ConfigManager) public configManager: ConfigManager
 	) {}
 
 	callback = async () => {
@@ -23,11 +23,11 @@ export class DeletePasswordCommand implements VSCCommand {
 
 		if (result) {
 			vscode.window.showInformationMessage(
-				`Successfully deleted password for address: ${this.configManager.configuration.address}`,
+				`Successfully deleted password for address: ${this.configManager.configuration.address}`
 			);
 		} else {
 			vscode.window.showErrorMessage(
-				`Could not delete password for address: ${this.configManager.configuration.address}`,
+				`Could not delete password for address: ${this.configManager.configuration.address}`
 			);
 		}
 	};

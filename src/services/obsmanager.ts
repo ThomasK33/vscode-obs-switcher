@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-
-import * as OBSWebSocket from "obs-websocket-js";
+import OBSWebSocket, { EventSubscription } from "obs-websocket-js";
 import { ConfigManager } from "./configuration";
 import { SecretsManager } from "./secrets";
 import { inject, injectable } from "inversify";
@@ -17,7 +16,7 @@ export class OBSManager {
 	constructor(
 		@inject(ConfigManager) public configManager: ConfigManager,
 		@inject(SecretsManager) public secretsManager: SecretsManager,
-		@inject(UIManager) public uiManager: UIManager,
+		@inject(UIManager) public uiManager: UIManager
 	) {
 		// Have to set this by hand here to avoid circular dependencies
 		// Sort of a poor mans lazy dependency injection
@@ -25,9 +24,9 @@ export class OBSManager {
 
 		this.obs = new OBSWebSocket();
 
-		this.obs.on("SwitchScenes", (data) => {
+		this.obs.on("CurrentProgramSceneChanged", (data) => {
 			if (!this.showsSecretFile) {
-				this.lastActiveScene = data["scene-name"];
+				this.lastActiveScene = data.sceneName;
 			}
 		});
 
@@ -49,7 +48,7 @@ export class OBSManager {
 				this.connect();
 			} catch (e) {
 				vscode.window.showErrorMessage(
-					`Could not automatically connect to OBS: ${e}`,
+					`Could not automatically connect to OBS: ${e}`
 				);
 			}
 		}
@@ -66,62 +65,98 @@ export class OBSManager {
 
 		if (showsSecretFile) {
 			try {
-				await this.obs.send("SetCurrentScene", {
-					"scene-name": sceneName,
+				await this.obs.call("SetCurrentProgramScene", {
+					sceneName: sceneName,
 				});
 			} catch (e) {
 				vscode.window.showErrorMessage(
-					`Could not SetCurrentScene: Error: ${JSON.stringify(e, null, 2)}`,
+					`Could not SetCurrentScene: Error: ${JSON.stringify(
+						e,
+						null,
+						2
+					)}`
 				);
 			}
 		} else {
 			if (autoSwitchBack && !showsSecretFile && this.showsSecretFile) {
-				await this.obs.send("SetCurrentScene", {
-					"scene-name": this.lastActiveScene,
+				await this.obs.call("SetCurrentProgramScene", {
+					sceneName: this.lastActiveScene,
 				});
 			}
 		}
 
 		this.showsSecretFile = showsSecretFile;
+		this.uiManager.updateStatusBarItemText();
 	}
 
 	async connect() {
-		const {
-			address,
-			secure,
-			sceneName,
-			transition,
-		} = this.configManager.configuration;
+		// ensure this variables are not modified on runtime
+		const { address, secure, sceneName } = this.configManager.configuration;
+
+		// transition fallback support
+		let transition = this.configManager.configuration.transition;
+
 		const password = await this.secretsManager.getPassword();
 		this.connecting = true;
 		this.uiManager.updateStatusBarItemText();
-		const connected = await this.obs.connect({
-			address,
-			password: password ?? undefined,
-			secure,
-		});
+		const connected = await this.obs.connect(
+			`${secure ? "wss" : "ws"}://${address}`,
+			password ?? undefined,
+			{
+				eventSubscriptions: EventSubscription.Scenes,
+			}
+		);
 
-		const sceneList = await this.obs.send("GetSceneList");
-		this.lastActiveScene = sceneList["current-scene"];
+		const sceneList = await this.obs.call("GetSceneList");
+		this.lastActiveScene = sceneList.currentProgramSceneName;
 
 		const settingsSceneInCollection = sceneList.scenes.reduce<boolean>(
-			(acc, scene) => acc || scene.name === sceneName,
-			false,
+			(acc, scene) => acc || scene.sceneName === sceneName,
+			false
 		);
 
 		if (!settingsSceneInCollection) {
 			await this.disconnect();
 			throw new Error(
 				`Could not find scene "${sceneName}" in current scene list. Currently available scenes are: ${sceneList.scenes
-					.map((scene) => scene.name)
-					.join(", ")}`,
+					.map((scene) => scene.sceneName)
+					.join(", ")}`
 			);
 		}
 
-		await this.obs.send("SetSceneTransitionOverride", {
+		const transitions = await this.obs.call("GetSceneTransitionList");
+		// transition names can change depending on the locale of OBS. In order to fallback to a potentially good cut transition in
+		// OBS setups were the locale isn't English, we find a fallback cut transition of the same kind. we then update the transition to be the
+		// newly found fallback transition and save the config.
+		// this is only done with the Cut transition, as it is the default (and probably desired) cut transition, and we want users
+		// using the extension to have a smooth first use experience. other transition setups to explicitly fail in order for the user
+		// to review the settings.
+		if (
+			transition == "Cut" ||
+			!transitions.transitions.find((t) => t.transitionName == transition)
+		) {
+			const cutFallback = transitions.transitions.find(
+				(t) => t.transitionKind == "cut_transition"
+			); // default to 'cut_transition' type
+			if (!cutFallback) {
+				throw new Error(
+					`the transition '${transition}' was not found, and no transitions similar to 'cut' were found`
+				);
+			}
+			vscode.window.showInformationMessage(
+				`The transition '${transition}' was not found, falling back to '${cutFallback.transitionName} and saving new config`
+			);
+			transition = cutFallback.transitionName as string;
+			this.configManager.setConfig(
+				"transition",
+				transition,
+				vscode.ConfigurationTarget.Global
+			);
+		}
+
+		await this.obs.call("SetSceneSceneTransitionOverride", {
 			sceneName,
 			transitionName: transition,
-			transitionDuration: 0,
 		});
 
 		return connected;
@@ -130,7 +165,9 @@ export class OBSManager {
 	async disconnect() {
 		try {
 			const { sceneName } = this.configManager.configuration;
-			await this.obs.send("RemoveSceneTransitionOverride", { sceneName });
+			await this.obs.call("SetSceneSceneTransitionOverride", {
+				sceneName,
+			});
 		} catch (e) {}
 
 		this.connecting = false;
@@ -140,8 +177,8 @@ export class OBSManager {
 	}
 
 	async resetScene() {
-		return this.obs.send("SetCurrentScene", {
-			"scene-name": this.lastActiveScene,
+		return this.obs.call("SetCurrentProgramScene", {
+			sceneName: this.lastActiveScene,
 		});
 	}
 }

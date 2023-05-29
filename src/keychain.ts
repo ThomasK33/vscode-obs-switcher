@@ -12,14 +12,16 @@ function getNodeModule<T>(moduleName: string): T | undefined {
 
 	try {
 		return vscodeRequire(
-			`${vscode.env.appRoot}/node_modules.asar/${moduleName}`,
+			`${vscode.env.appRoot}/node_modules.asar/${moduleName}`
 		);
 	} catch (err) {
 		// Not in ASAR.
 	}
 
 	try {
-		return vscodeRequire(`${vscode.env.appRoot}/node_modules/${moduleName}`);
+		return vscodeRequire(
+			`${vscode.env.appRoot}/node_modules/${moduleName}`
+		);
 	} catch (err) {
 		// Not available.
 	}

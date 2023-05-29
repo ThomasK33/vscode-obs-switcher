@@ -17,7 +17,7 @@ export class RemoveFileCommand implements VSCCommand {
 		}
 
 		const selectedFilesNames = selectedFiles.map((selectedFile) =>
-			selectedFile.path.replace(/^.*[\\\/]/, ""),
+			selectedFile.path.replace(/^.*[\\\/]/, "")
 		);
 
 		const { fileNames } = this.configManager.configuration;
@@ -32,7 +32,7 @@ export class RemoveFileCommand implements VSCCommand {
 		await this.configManager.setConfig("fileNames", fileNames);
 
 		vscode.window.showInformationMessage(
-			`Removed ${selectedFilesNames.join(", ")} from list of secret files`,
+			`Removed ${selectedFilesNames.join(", ")} from list of secret files`
 		);
 	};
 }
