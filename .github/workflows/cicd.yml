@@ -27,11 +27,15 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm run compile
+          npm run test-compile
       - name: Run tests
         uses: coactions/setup-xvfb@v1
         with:
           run: npm test
+      - name: Build
+        run: |
+          rm -rf out
+          npm run compile
       - name: Publish
         if: success() && startsWith(github.ref, 'refs/tags/v') && matrix.os == 'ubuntu-latest'
         run: npm run deploy

@@ -152,7 +152,7 @@
 		"test-compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "npm run esbuild-base -- --sourcemap --watch",
-		"pretest": "npm run compile && npm run lint",
+		"pretest": "npm run test-compile && npm run lint",
 		"test": "node ./out/test/runTest.js",
 		"package": "vsce package",
 		"deploy": "vsce publish"
