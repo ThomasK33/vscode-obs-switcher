@@ -1,6 +1,9 @@
 name: VS Code extension CI/CD
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -20,10 +23,10 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 10.x
+          node-version: 16.x
       - run: npm install
       - name: Run tests
-        uses: GabrielBB/xvfb-action@v1.6
+        uses: coactions/setup-xvfb@v1
         with:
           run: npm test
       - name: Publish
