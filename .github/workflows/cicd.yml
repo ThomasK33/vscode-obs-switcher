@@ -32,9 +32,12 @@ jobs:
         uses: coactions/setup-xvfb@v1
         with:
           run: npm test
-      - name: Build
+      - name: Clean out folder
+        uses: JesseTG/rm@v1.0.3
+        with:
+          path: ${{ github.workspace }}/out
+      - name: Build extension
         run: |
-          rm -rf out
           npm run compile
       - name: Publish
         if: success() && startsWith(github.ref, 'refs/tags/v') && matrix.os == 'ubuntu-latest'
