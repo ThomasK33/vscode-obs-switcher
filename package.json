@@ -159,7 +159,7 @@
 	},
 	"devDependencies": {
 		"@types/debug": "^4.1.7",
-		"@types/glob": "7.2.0",
+		"@types/glob": "8.1.0",
 		"@types/keytar": "4.4.0",
 		"@types/minimatch": "3.0.5",
 		"@types/mocha": "9.1.1",
@@ -170,7 +170,7 @@
 		"es6-promisify": "7.0.0",
 		"esbuild": "^0.17.15",
 		"eslint": "8.21.0",
-		"glob": "8.0.3",
+		"glob": "8.1.0",
 		"mocha": "10.0.0",
 		"typescript": "4.7.4",
 		"vsce": "2.10.0",
