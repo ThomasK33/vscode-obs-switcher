@@ -168,7 +168,7 @@
 		"@typescript-eslint/eslint-plugin": "5.30.7",
 		"@typescript-eslint/parser": "5.30.7",
 		"es6-promisify": "7.0.0",
-		"esbuild": "^0.17.15",
+		"esbuild": "^0.19.2",
 		"eslint": "8.21.0",
 		"glob": "8.0.3",
 		"mocha": "10.2.0",
