@@ -170,7 +170,7 @@
 		"es6-promisify": "7.0.0",
 		"esbuild": "^0.19.2",
 		"eslint": "8.21.0",
-		"glob": "8.0.3",
+		"glob": "10.3.10",
 		"mocha": "10.2.0",
 		"typescript": "4.7.4",
 		"vsce": "2.15.0",
